@@ -193,11 +193,11 @@ It's platform specific in that it uses the platform's native path separator."
                     (concat (file-name-as-directory conda-anaconda-home-tmp)
                             (file-name-as-directory conda-env-executables-dir)
                             "conda"))
-                   (command-format-string "\"%s\" ..activate \"%s\" \"%s\"")
-                   (executor (if (eq system-type 'windows-nt) "cmd.exe" "bash"))
+                   (command-format-string "\"%s\" activate  \"%s\"")
+                   ;; (executor (if (eq system-type 'windows-nt) "cmd.exe" "bash"))
                    (command (format command-format-string
                                     conda-executable-path
-                                    executor
+                                    ;; executor
                                     env-dir))
                    (return-code (process-file shell-file-name nil '(t nil) nil shell-command-switch command)))
               (unless (= 0 return-code)
@@ -398,11 +398,9 @@ It's platform specific in that it uses the platform's native path separator."
 ;;;###autoload
 (defun conda-env-shell-init (process)
   "Activate the current env in a newly opened shell PROCESS."
-  (let* ((activate-command (if (eq system-type 'windows-nt)
-			       '("activate")
-			     '("source" "activate")))
-	 (full-command (append activate-command `(,conda-env-current-name "\n")))
-	 (command-string (combine-and-quote-strings full-command)))
+  (let* ((activate-command '("conda" "activate"))
+         (full-command (append activate-command `(,conda-env-current-name "\n")))
+         (command-string (combine-and-quote-strings full-command)))
     (comint-send-string process command-string)))
 
 
